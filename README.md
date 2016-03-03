@@ -9,9 +9,9 @@ This is currently a **Work in Progress**
 For the moment, we're just displaying the results of the test.
 
 TODO :
-- [] Cover every tests in the CIS Benchmark
-- [] Find a way to check for a specific section or task only
-- [] Manage errors (boto configuration, )
+- [ ] Cover every tests in the CIS Benchmark
+- [ ] Find a way to check for a specific section or task only
+- [ ] Manage errors (boto configuration, ... )
 
 # Installation
 
@@ -45,3 +45,4 @@ If you are having issues, please let me know.
 I didn't set up an irc channel or anything, so for the moment we'll use with issues
 
 # License
+MIT License (MIT)
