@@ -8,7 +8,7 @@ from section_four import *
 
 class TestSectionFour(unittest.TestCase):
     def setUp(self):
-        """this is run before each test"""
+        """this is run before each test, we need to create a SectionFour object"""
         self.testee=SectionFour()
 
 
@@ -38,7 +38,7 @@ class TestSectionFour(unittest.TestCase):
             self.assertTrue('FromPort' in self.testee.getrules()[0].keys())
 
     def tearDown(self):
-        """this is after before each test"""
+        """this is run after  each test, we need to destroy the object"""
         del self.testee
 
 if __name__ == '__main__':
