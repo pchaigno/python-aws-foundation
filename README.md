@@ -2,17 +2,21 @@
 
 Python script using Boto3 to check your conformity against [CIS Amazon Web Services Foundations](https://d0.awsstatic.com/whitepapers/compliance/AWS_CIS_Foundations_Benchmark.pdf) benchmark.
 
-#### This is currently a **Work in Progress**
+#### This is currently a **Work in Progress**. This code is not stable and moving quickly.
 
 # Features
 
 For the moment, we're just displaying the results of the test.
 
 TODO :
-- [ ] Cover every tests in the CIS Benchmark
+- [ ] Cover every tests in the CIS Benchmark:
+  - [ ] Cover Section One
+  - [ ] Cover Section Two
+  - [ ] Cover Section Three
+  - [ ] Cover Section Four
 - [x] Find a way to check for a specific section only, or several at once.
 - [ ] Find a way to check for a specific task only
-- [x] Manage errors (boto configuration, missing reports ... )
+- [ ] Manage errors (boto configuration, missing reports ... )
 
 # Installation
 
@@ -44,7 +48,7 @@ python python-aws-foundation.py 1
 ```
 
 #### Note :
-As mentionned before, it is still a WIP, therefore all sections are not yet available.
+As mentioned before, it is still a WIP, therefore all sections are not yet available.
 
 # Contribute
 
@@ -55,7 +59,12 @@ You can contribute in several ways :
 # Support
 
 If you are having issues, please let me know.
-I didn't set up an irc channel or anything, so for the moment we'll use the github issues.
+I didn't set up an IRC channel or anything, so for the moment we'll use the github issues.
+
+# Authors
+
+A list of authors is available [here](https://github.com/SpoonBoy/python-aws-foundation/blob/master/AUTHORS.md)
+But, in case one day I miss someone, you can check the [contributors page](https://github.com/SpoonBoy/python-aws-foundation/graphs/contributors) on github
 
 # License
 MIT License (MIT)
