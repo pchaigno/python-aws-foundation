@@ -15,3 +15,7 @@ class CloudTrailService:
     def getTrailsReport(self):
         trailsReport = self.CTClient.describe_trails()
         return trailsReport["trailList"]
+
+    def getLogGroupArn(self):
+        pass
+        # for trail in self.trailsReport:
