@@ -13,6 +13,7 @@ class IAMService:
     def __init__(self):
         self.IAMClient = boto3.client("iam")
         self.credReport = self.getCredReport()
+        self.passwordPolicy = self.getPasswordPolicy()
 
     def getCredReport(self):
         try:
@@ -30,3 +31,10 @@ class IAMService:
         for row in csv.reader(credReport.splitlines(), delimiter=","):
             report.append(row)
         return report
+
+    def getPasswordPolicy(self):
+        try:
+            passwordPolicy = self.IAMClient.get_account_password_policy()
+            return passwordPolicy["PasswordPolicy"]
+        except botocore.exceptions.ClientError:
+            return None
