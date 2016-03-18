@@ -49,6 +49,13 @@ class SectionOne:
         self.name = "1.2 Ensure multi-factor authentication (MFA) is enabled for all IAM users that have a console password"
         self.scored = True
         self.passed = True
+        #
+        # This test might not work, for some not yet known reasons.
+        # mfa_active is still false, even if i setup a virtual MFA on my root
+        # account.
+        # trying to generate_credential_report() doesn't seems to update the
+        # value
+        #
         for row in self.IAM.credReport:
             if "false" in row[index_mfa_active]:
                 self.passed = False
@@ -94,8 +101,105 @@ class SectionOne:
                     break
         print("{}, passed : {}".format(self.name, self.passed))
 
+    def section_1_5(self):
+        self.name = "1.5 Ensure IAM password policy requires at least one uppercase letter"
+        self.scored = True
+        self.passed = False
+        if self.IAM.passwordPolicy is not None:
+                self.passed = self.IAM.passwordPolicy["RequireUppercaseCharacters"]
+        print("{}, passed : {}".format(self.name, self.passed))
+
+    def section_1_6(self):
+        self.name = "1.6 Ensure IAM password policy requires at least one lowercase letter"
+        self.scored = True
+        self.passed = False
+        if self.IAM.passwordPolicy is not None:
+                self.passed = self.IAM.passwordPolicy["RequireLowercaseCharacters"]
+        print("{}, passed : {}".format(self.name, self.passed))
+
+    def section_1_7(self):
+        self.name = "1.7 Ensure IAM password policy requires at least one symbol"
+        self.scored = True
+        self.passed = False
+        if self.IAM.passwordPolicy is not None:
+                self.passed = self.IAM.passwordPolicy["RequireSymbols"]
+        print("{}, passed : {}".format(self.name, self.passed))
+
+    def section_1_8(self):
+        self.name = "1.8 Ensure IAM password policy requires at least one number"
+        self.scored = True
+        self.passed = False
+        if self.IAM.passwordPolicy is not None:
+                self.passed = self.IAM.passwordPolicy["RequireNumbers"]
+        print("{}, passed : {}".format(self.name, self.passed))
+
+    def section_1_9(self):
+        self.name = "1.9 Ensure IAM password policy requires minimum length of 14 or greater"
+        self.scored = True
+        self.passed = False
+        if self.IAM.passwordPolicy is not None:
+            if self.IAM.passwordPolicy["MinimumPasswordLength"] >= 14:
+                self.passed = True
+        print("{}, passed : {}".format(self.name, self.passed))
+
+    def section_1_10(self):
+        self.name = "1.10 Ensure IAM password policy prevents password reuse"
+        self.scored = True
+        self.passed = False
+        if self.IAM.passwordPolicy is not None:
+            if "PasswordReusePrevention" in self.IAM.passwordPolicy:
+                if self.IAM.passwordPolicy["PasswordReusePrevention"] >= 24:
+                    self.passed = True
+        print("{}, passed : {}".format(self.name, self.passed))
+
+    def section_1_11(self):
+        self.name = "1.11 Ensure IAM password policy expires passwords within 90 days or less "
+        self.scored = True
+        self.passed = False
+        if self.IAM.passwordPolicy is not None:
+            if "MaxPasswordAge" in self.IAM.passwordPolicy:
+                if self.IAM.passwordPolicy["MaxPasswordAge"] <= 90:
+                    self.passed = True
+        print("{}, passed : {}".format(self.name, self.passed))
+
+    def section_1_12(self):
+        self.name = "1.12 Ensure no root account access key exists"
+        self.scored = True
+        self.passed = False
+        for row in self.IAM.credReport:
+            if "root_account" in row[index_user]:
+                if (
+                    (row[index_access_key_1_active] == "false") and
+                    (row[index_access_key_2_active] == "false")
+                ):
+                    self.passed = True
+                break
+        print("{}, passed : {}".format(self.name, self.passed))
+
+    def section_1_13(self):
+        self.name = "1.13 Ensure hardware MFA is enabled for the \"root\" account"
+        self.scored = True
+        self.passed = False
+        #
+        # This test is not properly described in the CIS AWS Foundation
+        #
+        # Run the following command:
+        # aws iam get-account-summary
+        # Ensure the AccountMFAEnabled property is set to 1
+        #
+        # This doesn't check if the MFA is enabled for the root account or for
+        # an other user
+
     def cis_check(self):
         self.section_1_1()
         self.section_1_2()
         self.section_1_3()
         self.section_1_4()
+        self.section_1_5()
+        self.section_1_6()
+        self.section_1_7()
+        self.section_1_8()
+        self.section_1_9()
+        self.section_1_10()
+        self.section_1_11()
+        self.section_1_12()
