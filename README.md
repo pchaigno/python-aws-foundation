@@ -10,7 +10,7 @@ For the moment, we're just displaying the results of the test.
 
 TODO :
 - [ ] Cover every tests in the CIS Benchmark:
-  - [ ] Cover Section One
+  - [x] Cover Section One
   - [ ] Cover Section Two
   - [ ] Cover Section Three
   - [ ] Cover Section Four
