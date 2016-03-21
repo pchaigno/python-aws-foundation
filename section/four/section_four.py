@@ -34,6 +34,30 @@ class SectionFour:
                     self.passed = False
         print("{}, passed : {}".format(self.name, self.passed))
 
+    def section_4_3(self):
+        self.name = "4.3 Ensure VPC Flow Logging is Enabled in all Applicable Regions"
+        self.scored = True
+        self.passed = False
+        for flow in self.EC2.flowLogs:
+            if flow["FlowLogStatus"] == "ACTIVE":
+                self.passed = True
+                break
+        print("{}, passed : {}".format(self.name, self.passed))
+
+    def section_4_4(self):
+        self.name = "4.4 Ensure the default security group restricts all traffic"
+        self.scored = True
+        self.passed = True
+        for rule in self.EC2.securityGroups:
+            if (
+                rule["IpPermissions"] and
+                rule["IpPermissionsEgress"]
+            ):
+                self.passed = False
+        print("{}, passed : {}".format(self.name, self.passed))
+
     def cis_check(self):
         self.section_4_1()
         self.section_4_2()
+        self.section_4_3()
+        self.section_4_4()

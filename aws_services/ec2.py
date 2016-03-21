@@ -11,14 +11,19 @@ class EC2Service:
     def __init__(self):
         self.ec2_client = boto3.client("ec2")
         self.securityGroups = self.getSecurityGroups()
+        self.flowLogs = self.getFlowLogs()
 
     def getSecurityGroups(self):
         securityGroups = self.ec2_client.describe_security_groups()
         return securityGroups["SecurityGroups"]
 
-    def getSecurityGroupIDs(self):
-        security_groups = self.getSecurityGroups()
-        return [sg["GroupId"] for sg in security_groups["SecurityGroups"]]
+    def getFlowLogs(self):
+        flowLogs = self.ec2_client.describe_flow_logs()
+        return flowLogs["FlowLogs"]
 
-    def getSecurityGroupIpPermissions(self, sg_id):
-        return self.ec2_client.describe_security_groups(GroupIds=[sg_id])
+    # def getSecurityGroupIDs(self):
+    #     security_groups = self.getSecurityGroups()
+    #     return [sg["GroupId"] for sg in security_groups["SecurityGroups"]]
+    #
+    # def getSecurityGroupIpPermissions(self, sg_id):
+    #     return self.ec2_client.describe_security_groups(GroupIds=[sg_id])
