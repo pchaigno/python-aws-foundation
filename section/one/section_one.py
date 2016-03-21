@@ -190,6 +190,28 @@ class SectionOne:
         # This doesn't check if the MFA is enabled for the root account or for
         # an other user
 
+    def section_1_14(self):
+        self.name = "1.14 Ensure security questions are registered in the AWS account"
+        self.scored = False
+        self.passed = False
+        #
+        # This test is automatable
+        #
+
+    def section_1_15(self):
+        self.name = "1.15 Ensure IAM policies are attached only to groups or roles"
+        self.scored = True
+        self.passed = False
+        for user in self.IAM.users:
+            attachedPolicies = self.IAM.getUserAttachedPolicies(user["UserName"])
+            userPolicies = self.IAM.getUserPolicies(user["UserName"])
+            if (
+                not attachedPolicies and
+                not userPolicies
+            ):
+                self.passed = True
+        print("{}, passed : {}".format(self.name, self.passed))
+
     def cis_check(self):
         self.section_1_1()
         self.section_1_2()
@@ -203,3 +225,4 @@ class SectionOne:
         self.section_1_10()
         self.section_1_11()
         self.section_1_12()
+        self.section_1_15()

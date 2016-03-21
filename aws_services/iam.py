@@ -14,6 +14,7 @@ class IAMService:
         self.IAMClient = boto3.client("iam")
         self.credReport = self.getCredReport()
         self.passwordPolicy = self.getPasswordPolicy()
+        self.users = self.getUsers()
 
     def getCredReport(self):
         try:
@@ -38,3 +39,12 @@ class IAMService:
             return passwordPolicy["PasswordPolicy"]
         except botocore.exceptions.ClientError:
             return None
+
+    def getUsers(self):
+        return self.IAMClient.list_users()["Users"]
+
+    def getUserAttachedPolicies(self, name):
+        return self.IAMClient.list_attached_user_policies(UserName=name)["AttachedPolicies"]
+
+    def getUserPolicies(self, name):
+        return self.IAMClient.list_user_policies(UserName=name)["PolicyNames"]
