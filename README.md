@@ -38,13 +38,13 @@ Default output format [json]: json                # text is an other possible va
 
 This is a basic python script, so simply type the following :
 ```
-python python-aws-foundation.py {{Section number(s) to test}}
+python aws-foundation.py {{Section number(s) to test}}
 ```
 with `{{Section numbers to test}}` being a section number in the Benchmark PDF.
 
 So if you want to check `Identify and Access Management`, which is section number 1 in the PDF, you will have to type the following command :
 ```
-python python-aws-foundation.py 1
+python aws-foundation.py 1
 ```
 
 #### Note :
