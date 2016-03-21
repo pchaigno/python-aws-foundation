@@ -39,6 +39,12 @@ class SectionOne:
         self.name = "1.1 Avoid the use of the \"root\" account"
         self.scored = True
         self.passed = True
+        #
+        # TODO: check for the value in
+        # - password_last_used
+        # - access_key_1_last_used_date
+        # - access_key_2_last_used_date
+        #
         for row in self.IAM.credReport:
             if "root_account" in row[index_user]:
                 self.passed = False
@@ -75,7 +81,6 @@ class SectionOne:
                 if delta.days > 90:
                     self.passed = False
                     break
-
         print("{}, passed : {}".format(self.name, self.passed))
 
     def section_1_4(self):
@@ -189,27 +194,27 @@ class SectionOne:
         #
         # This doesn't check if the MFA is enabled for the root account or for
         # an other user
+        print("{}, passed : {}".format(self.name, self.passed))
 
     def section_1_14(self):
-        self.name = "1.14 Ensure security questions are registered in the AWS account"
+        self.name = """1.14 Ensure security questions are registered in the AWS account.
+        Manually perform this test"""
         self.scored = False
         self.passed = False
         #
         # This test is automatable
         #
+        print("{}, scored : {}".format(self.name, self.scored))
 
     def section_1_15(self):
         self.name = "1.15 Ensure IAM policies are attached only to groups or roles"
         self.scored = True
-        self.passed = False
+        self.passed = True
         for user in self.IAM.users:
             attachedPolicies = self.IAM.getUserAttachedPolicies(user["UserName"])
             userPolicies = self.IAM.getUserPolicies(user["UserName"])
-            if (
-                not attachedPolicies and
-                not userPolicies
-            ):
-                self.passed = True
+            if (attachedPolicies or userPolicies):
+                self.passed = False
         print("{}, passed : {}".format(self.name, self.passed))
 
     def cis_check(self):
@@ -225,4 +230,6 @@ class SectionOne:
         self.section_1_10()
         self.section_1_11()
         self.section_1_12()
+        self.section_1_13()
+        self.section_1_14()
         self.section_1_15()
