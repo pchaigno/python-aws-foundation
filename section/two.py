@@ -58,7 +58,7 @@ class SectionTwo:
             self.passed = False
         print("{}, passed : {}".format(self.name, self.passed))
 
-    # def section_2_4(self):
+    def section_2_4(self):
         self.name = "2.4 Ensure CloudTrail trails are integrated with CloudWatch Logs"
         self.scored = True
         self.passed = True
