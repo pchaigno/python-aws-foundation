@@ -1,6 +1,8 @@
 # -*- coding : utf8 -*-
 
 from json import loads
+from dateutil.tz import tzlocal
+from datetime import datetime
 
 
 class SectionTwo:
@@ -57,10 +59,36 @@ class SectionTwo:
         print("{}, passed : {}".format(self.name, self.passed))
 
     # def section_2_4(self):
-    #     self.name = "2.4 Ensure CloudTrail trails are integrated with CloudWatch Logs"
-    #     self.scored = True
-    #     self.passed = "To be implemented"
-    #     print("{}, passed : {}".format(self.name, self.passed))
+        self.name = "2.4 Ensure CloudTrail trails are integrated with CloudWatch Logs"
+        self.scored = True
+        self.passed = True
+
+        if self.CT.describe_trails() is not None:
+            resp = self.CT.describe_trails()
+
+            if u'CloudWatchLogsRoleArn' in resp["trailList"][0].keys():
+                CWname = resp["trailList"][0][u'Name']
+                CWstatus = self.CT.get_trail_status(Name=CWname)
+
+                if CWstatus[u'IsLogging']:
+                    LastDelivery = CWstatus[
+                        u'LatestCloudWatchLogsDeliveryTime']
+                    delta = datetime.now(tzlocal()) - LastDelivery
+                    if delta.days > 1:
+                        # logs are considered too old, integration test is
+                        # failed
+                        self.passed = False
+                else:
+                    # currently not Logging
+                    self.passed = False
+            else:  # no CloudWatch integration
+                self.passed = False
+
+        else:
+            # problem with describe_trails
+            self.passed = False
+
+        print("{}, passed : {}".format(self.name, self.passed))
 
     def cis_check(self):
         self.section_2_1()
