@@ -63,7 +63,7 @@ class SectionTwo:
         self.scored = True
         self.passed = True
 
-        if self.CT.describe_trails() is not None:
+        if self.CT.describe_trails():
             resp = self.CT.describe_trails()
 
             if u'CloudWatchLogsRoleArn' in resp["trailList"][0].keys():
@@ -90,7 +90,24 @@ class SectionTwo:
 
         print("{}, passed : {}".format(self.name, self.passed))
 
+    def section_2_6(self):
+        self.name = "Ensure S3 bucket access logging is enabled on the CloudTrail S3 bucket"
+        self.scored = True
+        # new style : Spoonboy, i would rather have false by default
+        self.passed = False
+        if self.CT.describe_trails():
+            resp = self.CT.describe_trails()
+            if (resp["trailList"][0]):
+                # we get the CloudTrail Bucket name
+                buck = resp["trailList"][0][u'S3BucketName']
+                # we check if attribute logging_enabled is not None
+                if self.S3.BucketLogging(buck).logging_enabled is not None:
+                    self.passed = True
+        print("{}, passed : {}".format(self.name, self.passed))
+
     def cis_check(self):
         self.section_2_1()
         self.section_2_2()
         self.section_2_3()
+        self.section_2_4()
+        self.section_2_6()
