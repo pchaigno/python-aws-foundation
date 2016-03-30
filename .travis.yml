@@ -5,4 +5,4 @@ python:
   - "3.4"
   - "3.5"
 install:
-  - apt-get install awscli
+  - pip install awscli
