@@ -1,8 +1,7 @@
 # -*- coding : utf8 -*-
 
 from json import loads
-from dateutil.tz import tzlocal
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class SectionTwo:
@@ -21,6 +20,7 @@ class SectionTwo:
                 if trail["IsMultiRegionTrail"] is True:
                     self.S3.CTBucketName = trail["S3BucketName"]
                     self.passed = True
+                    break
         print("{}, passed : {}".format(self.name, self.passed))
 
     def section_2_2(self):
@@ -32,6 +32,7 @@ class SectionTwo:
             for trail in self.CT.trailsReport:
                 if trail["LogFileValidationEnabled"] is not True:
                     self.passed = False
+                    break
         print("{}, passed : {}".format(self.name, self.passed))
 
     def section_2_3(self):
@@ -44,14 +45,18 @@ class SectionTwo:
                 if grantee["Grantee"]["Type"] == "Group":
                     if ("AuthenticatedUsers" or "AllUsers") in grantee["Grantee"]["URI"]:
                         self.passed = False
+                        break
             S3BucketPolicy = self.S3.getS3BucketPolicy(self.S3.CTBucketName)
             # temporary fix, waiting for
             # https://github.com/aws/aws-cli/issues/1851
             S3BucketPolicy = loads(S3BucketPolicy["Policy"])
             for statement in S3BucketPolicy["Statement"]:
-                if (statement["Effect"] == "Allow" and
-                        statement["Principal"] == "*"):
+                if (
+                    statement["Effect"] == "Allow" and
+                    statement["Principal"] == "*"
+                ):
                     self.passed = False
+                    break
         else:
             # there is no S3 bucket used to store cloudtrail logs, so it can
             # not be publicly accessible, but we consider this test as failed
@@ -61,48 +66,31 @@ class SectionTwo:
     def section_2_4(self):
         self.name = "2.4 Ensure CloudTrail trails are integrated with CloudWatch Logs"
         self.scored = True
-        self.passed = True
-
-        if self.CT.describe_trails():
-            resp = self.CT.describe_trails()
-
-            if u'CloudWatchLogsRoleArn' in resp["trailList"][0].keys():
-                CWname = resp["trailList"][0][u'Name']
-                CWstatus = self.CT.get_trail_status(Name=CWname)
-
-                if CWstatus[u'IsLogging']:
-                    LastDelivery = CWstatus[
-                        u'LatestCloudWatchLogsDeliveryTime']
-                    delta = datetime.now(tzlocal()) - LastDelivery
-                    if delta.days > 1:
-                        # logs are considered too old, integration test is
-                        # failed
-                        self.passed = False
-                else:
-                    # currently not Logging
-                    self.passed = False
-            else:  # no CloudWatch integration
-                self.passed = False
-
-        else:
-            # problem with describe_trails
-            self.passed = False
-
+        self.passed = False
+        if self.CT.trailsReport:
+            for trail in self.CT.trailsReport:
+                if 'CloudWatchLogsLogGroupArn' in trail:
+                    trailStatus = self.CT.getTrailStatus(trail["Name"])
+                    date = trailStatus["LatestCloudWatchLogsDeliveryTime"].replace(tzinfo=None)
+                    if date > datetime.now() - timedelta(days=1):
+                        self.passed = True
         print("{}, passed : {}".format(self.name, self.passed))
 
-    def section_2_6(self):
-        self.name = "Ensure S3 bucket access logging is enabled on the CloudTrail S3 bucket"
+    def section_2_5(self):
+        self.name = "2.5 Ensure AWS Config is enabled in all regions"
         self.scored = True
-        # new style : Spoonboy, i would rather have false by default
         self.passed = False
-        if self.CT.describe_trails():
-            resp = self.CT.describe_trails()
-            if (resp["trailList"][0]):
-                # we get the CloudTrail Bucket name
-                buck = resp["trailList"][0][u'S3BucketName']
-                # we check if attribute logging_enabled is not None
-                if self.S3.BucketLogging(buck).logging_enabled is not None:
-                    self.passed = True
+        # This test requires the VM to be in US-East-1 (Virginia)
+        # It will be implemented later
+
+    def section_2_6(self):
+        self.name = "2.6 Ensure S3 bucket access logging is enabled on the CloudTrail S3 bucket"
+        self.scored = True
+        self.passed = False
+        if self.S3.CTBucketName is not None:
+            logging_details = self.S3.getS3BucketLogging(self.S3.CTBucketName)
+            if 'LoggingEnabled' in logging_details:
+                self.passed = True
         print("{}, passed : {}".format(self.name, self.passed))
 
     def cis_check(self):
@@ -110,4 +98,5 @@ class SectionTwo:
         self.section_2_2()
         self.section_2_3()
         self.section_2_4()
+        # self.section_2_5()
         self.section_2_6()
