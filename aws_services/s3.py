@@ -19,3 +19,6 @@ class S3Service:
 
     def getS3BucketPolicy(self, bucket_name):
             return self.S3Client.get_bucket_policy(Bucket=bucket_name)
+
+    def getS3BucketLogging(self, bucket_name):
+            return self.S3Client.get_bucket_logging(Bucket=bucket_name)
